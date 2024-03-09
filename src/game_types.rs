@@ -1,12 +1,12 @@
 pub struct Upgrade {
     pub is_active: bool,
-    pub cost: i64,
+    pub cost: i128,
     pub activate_call: fn(&mut GameState) -> bool,
 }
 
 pub struct GameState {
-    pub money: i64,
-    pub click_value: i64,
+    pub money: i128,
+    pub click_value: i128,
     pub upgrades: Vec<Upgrade>,
 }
 
@@ -28,6 +28,10 @@ impl GameState {
     }
 
     pub fn calculate_circle_radius(&self) -> f32 {
-        return 15.0 + self.money as f32 / 50.0;
+        const MIN_CIRCLE_RADIUS: f32 = 15.0;
+        return f32::max(
+            50.0 * f32::log(self.money as f32 / 150.0, 10.0),
+            MIN_CIRCLE_RADIUS,
+        );
     }
 }

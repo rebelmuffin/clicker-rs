@@ -3,9 +3,29 @@ use crate::upgrades::*;
 
 pub fn create_default_game_state() -> GameState {
     return GameState {
-        money: 0,
+        money: 1000,
         click_value: 1,
         upgrades: vec![
+            Upgrade {
+                is_active: false,
+                cost: 25,
+                activate_call: double_click_value,
+            },
+            Upgrade {
+                is_active: false,
+                cost: 25,
+                activate_call: double_click_value,
+            },
+            Upgrade {
+                is_active: false,
+                cost: 25,
+                activate_call: double_click_value,
+            },
+            Upgrade {
+                is_active: false,
+                cost: 25,
+                activate_call: double_click_value,
+            },
             Upgrade {
                 is_active: false,
                 cost: 25,

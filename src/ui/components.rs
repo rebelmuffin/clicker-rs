@@ -7,6 +7,12 @@ pub enum ColourOption {
     Override(Color),
 }
 
+impl Default for ColourOption {
+    fn default() -> Self {
+        ColourOption::Default()
+    }
+}
+
 impl ColourOption {
     pub fn get_colour(self, default: Color) -> Color {
         return match self {
@@ -21,23 +27,51 @@ pub struct Button {
     pub colour: Color,
     pub hover_colour: ColourOption,
     pub down_colour: ColourOption,
-    pub text: String,
-    pub font_size: f32,
-    pub text_colour: Color,
+
+    text: String,
+    font_size: f32,
+    text_colour: Color,
+    text_padding: f32,
+
     pub disabled: bool,
 }
 
+impl Default for Button {
+    fn default() -> Self {
+        Self {
+            rect: Default::default(),
+            colour: Default::default(),
+            hover_colour: Default::default(),
+            down_colour: Default::default(),
+            text: Default::default(),
+            font_size: 24.0,
+            text_colour: BLACK,
+            text_padding: 10.0,
+            disabled: false,
+        }
+    }
+}
+
 impl Button {
-    pub fn new(rect: Rect, colour: Color, text: String, disabled: bool) -> Button {
+    pub fn new(
+        mut rect: Rect,
+        colour: Color,
+        text: String,
+        disabled: bool,
+        auto_width: bool,
+    ) -> Button {
+        if auto_width {
+            let default = Button::default();
+            let text_width = measure_text(text.as_str(), None, default.font_size as u16, 1.0).width;
+            rect.w = text_width + default.text_padding * 2.0;
+        }
+
         return Button {
             rect,
             colour,
             text,
             disabled,
-            hover_colour: ColourOption::Default(),
-            down_colour: ColourOption::Default(),
-            font_size: 24.0,
-            text_colour: BLACK,
+            ..Default::default()
         };
     }
 
@@ -90,8 +124,14 @@ impl Button {
             rect_colour,
         );
 
-        let text_x = self.rect.x + self.font_size / 5.0; // this is very arbitrary but ok
+        // Center align the text
+        // #TODO implement multiple alignment types
+        let text_width = measure_text(self.text.as_str(), None, self.font_size as u16, 1.0).width;
+        let button_width = self.rect.w;
+        let text_x = self.rect.x + button_width / 2.0 - text_width / 2.0;
+
         let text_y = self.rect.y + self.rect.h / 2.0 + self.font_size / 4.0;
+
         draw_text(
             self.text.as_str(),
             text_x,
